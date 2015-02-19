@@ -685,8 +685,7 @@ void Texture::SetParamsFromImages(const Vector<Image *> * images)
 
 void Texture::FlushDataToRenderer(Vector<Image *> * images)
 {
-	this->Retain();
-	Function<void()> fn = Bind(MakeFunction(this, &Texture::FlushDataToRendererInternal), images);
+    Function<void()> fn = Bind(MakeFunction(PointerWrapper<Texture>::WrapRetainRelease(this), &Texture::FlushDataToRendererInternal), images);
 	JobManager::Instance()->CreateMainJob(fn);
 }
 
@@ -736,8 +735,6 @@ void Texture::FlushDataToRendererInternal(Vector<Image *> * images)
 
 	ReleaseImages(images);
     SafeDelete(images);
-
-	this->Release();
 }
 
 bool Texture::CheckImageSize(const Vector<DAVA::Image *> &imageSet)
@@ -935,8 +932,7 @@ Texture * Texture::CreateFBO(uint32 w, uint32 h, PixelFormat format, DepthFormat
 #if defined(__DAVAENGINE_OPENGL__)
 void Texture::HWglCreateFBOBuffers()
 {
-	this->Retain();
-	JobManager::Instance()->CreateMainJob(MakeFunction(this, &Texture::HWglCreateFBOBuffersInternal));
+    JobManager::Instance()->CreateMainJob(MakeFunction(PointerWrapper<Texture>::WrapRetainRelease(this), &Texture::HWglCreateFBOBuffersInternal));
 }
 
 void Texture::HWglCreateFBOBuffersInternal()
@@ -1015,8 +1011,6 @@ void Texture::HWglCreateFBOBuffersInternal()
 	}
 
 	state = STATE_VALID;
-
-	this->Release();
 }
 
 #endif //#if defined(__DAVAENGINE_OPENGL__)
