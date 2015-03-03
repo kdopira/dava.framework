@@ -357,7 +357,17 @@ void MoveTouchsToVector(void *inTouches, DAVA::Vector<DAVA::UIEvent> *outTouches
 -(void)process:(int) touchType touch:(NSArray*)active withEvent: (NSArray*)total
 {
 	MoveTouchsToVector(active, &activeTouches);
-	MoveTouchsToVector(total, &totalTouches);
+    
+    if(self.multipleTouchEnabled)
+    {
+        MoveTouchsToVector(total, &totalTouches);
+    }
+    else
+    {
+        //NOTE: DF-6117 - has other touches
+        totalTouches = activeTouches;
+    }
+    
 	DAVA::UIControlSystem::Instance()->OnInput(touchType, activeTouches, totalTouches);
 	activeTouches.clear();
 	totalTouches.clear();
