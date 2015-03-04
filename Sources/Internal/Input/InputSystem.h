@@ -87,8 +87,10 @@ public:
     void SetCursorPining(bool isPin);
     
     inline void EnableMultitouch(bool enabled);
-    inline bool GetMultitouchEnabled() const;
+    inline void EnableCancelableInput(bool enabled);
     
+    inline bool GetMultitouchEnabled() const;
+    inline bool GetCancelableInput() const;
 protected:
     
     KeyboardDevice *keyboard;
@@ -98,6 +100,7 @@ protected:
     bool pinCursor;
     
     bool isMultitouchEnabled;
+    bool isCancelableEnabled;
 };
 
 inline bool InputSystem::IsCursorPining()
@@ -123,6 +126,16 @@ inline void InputSystem::EnableMultitouch(bool enabled)
 inline bool InputSystem::GetMultitouchEnabled() const
 {
 	return isMultitouchEnabled;
+}
+
+inline void InputSystem::EnableCancelableInput(bool enabled)
+{
+    isCancelableEnabled = enabled;
+}
+    
+inline bool InputSystem::GetCancelableInput() const
+{
+    return isCancelableEnabled;
 }
 
 };
