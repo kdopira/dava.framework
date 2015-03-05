@@ -39,7 +39,7 @@
 namespace DAVA
 {
 
-#define USE_BATCHING 1
+#define USE_BATCHING 0
 
 #if USE_BATCHING
 static const uint32 MAX_VERTICES = 4096;
