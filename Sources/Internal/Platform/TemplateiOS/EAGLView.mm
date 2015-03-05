@@ -162,6 +162,7 @@
         DAVA::RenderSystem2D::Instance()->Init();
         
 		self.multipleTouchEnabled = (DAVA::InputSystem::Instance()->GetMultitouchEnabled()) ? YES : NO;
+        canCancelInput = (DAVA::InputSystem::Instance()->GetCancelableInput()) ? YES : NO;
 		animating = FALSE;
 		displayLinkSupported = FALSE;
 		animationFrameInterval = 1;
@@ -303,7 +304,7 @@
 	}
 }
 
-void MoveTouchsToVector(void *inTouches, DAVA::Vector<DAVA::UIEvent> *outTouches)
+void MoveTouchsToVector(void *inTouches, DAVA::Vector<DAVA::UIEvent> *outTouches, bool canCancelInput)
 {
 	NSArray *ar = (NSArray *)inTouches;
 	for(UITouch *curTouch in ar)
@@ -345,7 +346,9 @@ void MoveTouchsToVector(void *inTouches, DAVA::Vector<DAVA::UIEvent> *outTouches
 				newTouch.phase = DAVA::UIEvent::PHASE_DRAG;
 				break;
 			case UITouchPhaseCancelled:
-				newTouch.phase = DAVA::UIEvent::PHASE_CANCELLED;
+                //newTouch.phase = DAVA::UIEvent::PHASE_CANCELLED;
+                //NOTE: DF-6117 - has other touches
+                newTouch.phase = canCancelInput ? DAVA::UIEvent::PHASE_CANCELLED : DAVA::UIEvent::PHASE_ENDED;
 				break;
 				
 		}
@@ -356,19 +359,20 @@ void MoveTouchsToVector(void *inTouches, DAVA::Vector<DAVA::UIEvent> *outTouches
 
 -(void)process:(int) touchType touch:(NSArray*)active withEvent: (NSArray*)total
 {
-	MoveTouchsToVector(active, &activeTouches);
+	MoveTouchsToVector(active, &activeTouches, canCancelInput);
     
     if(self.multipleTouchEnabled)
     {
-        MoveTouchsToVector(total, &totalTouches);
+        MoveTouchsToVector(total, &totalTouches, canCancelInput);
+        
+        DAVA::UIControlSystem::Instance()->OnInput(touchType, activeTouches, totalTouches);
     }
     else
     {
         //NOTE: DF-6117 - has other touches
-        totalTouches = activeTouches;
+        DAVA::UIControlSystem::Instance()->OnInput(touchType, activeTouches, activeTouches);
     }
     
-	DAVA::UIControlSystem::Instance()->OnInput(touchType, activeTouches, totalTouches);
 	activeTouches.clear();
 	totalTouches.clear();
 }

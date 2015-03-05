@@ -50,6 +50,7 @@
 @private
 	id <ESRenderer> renderer;
 	
+    BOOL canCancelInput;
 	BOOL animating;
 	BOOL displayLinkSupported;
 	NSInteger animationFrameInterval;

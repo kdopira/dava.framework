@@ -39,7 +39,8 @@ namespace DAVA
 InputSystem::InputSystem() :
 keyboard(0),
 gamepad(0),
-isMultitouchEnabled(true)
+isMultitouchEnabled(true),
+isCancelableEnabled(true)
 {
     keyboard = new KeyboardDevice();
     gamepad = new GamepadDevice();
