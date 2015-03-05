@@ -345,7 +345,8 @@ void MoveTouchsToVector(void *inTouches, DAVA::Vector<DAVA::UIEvent> *outTouches
 				newTouch.phase = DAVA::UIEvent::PHASE_DRAG;
 				break;
 			case UITouchPhaseCancelled:
-				newTouch.phase = DAVA::UIEvent::PHASE_CANCELLED;
+				//newTouch.phase = DAVA::UIEvent::PHASE_CANCELLED;
+                newTouch.phase = DAVA::UIEvent::PHASE_ENDED;
 				break;
 				
 		}
