@@ -247,7 +247,9 @@ void RenderSystem2D::Reset()
     defaultSpriteDrawState.shader = TEXTURE_MUL_FLAT_COLOR;
 
     batches.clear();
+#if USE_BATCHING
     batches.reserve(RESERVED_BATCHES);
+#endif
     currentBatch.Reset();
 
     vertexIndex = 0;
