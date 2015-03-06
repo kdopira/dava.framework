@@ -404,6 +404,7 @@ void UIControlBackground::Draw(const UIGeometricData &parentGeometricData)
 
         case DRAW_SCALE_PROPORTIONAL:
         case DRAW_SCALE_PROPORTIONAL_ONE:
+		case DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE:
         {
             if (!spr)break;
             float32 w, h;
@@ -413,30 +414,42 @@ void UIControlBackground::Draw(const UIGeometricData &parentGeometricData)
 
             if(w < h)
             {
-                if(type==DRAW_SCALE_PROPORTIONAL_ONE)
+				if (type == DRAW_SCALE_PROPORTIONAL_ONE || type == DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
                 {
-                    w = spr->GetWidth() * h * geometricData.scale.y;
+					w = spr->GetWidth() * h;
+
+					if (type != DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
+					{
+						w *= geometricData.scale.y;
+					}
+
                     ph *= h;
                     h = drawRect.dy;
                 }
                 else
                 {
-                    h = spr->GetHeight() * w * geometricData.scale.x;
+					h = spr->GetHeight() * w * geometricData.scale.x;
                     ph *= w;
                     w = drawRect.dx;
                 }
             }
             else
             {
-                if(type==DRAW_SCALE_PROPORTIONAL_ONE)
+				if (type == DRAW_SCALE_PROPORTIONAL_ONE || type == DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
                 {
-                    h = spr->GetHeight() * w * geometricData.scale.x;
+					h = spr->GetHeight() * w;
+					
+					if (type != DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
+					{
+						h *= geometricData.scale.x;
+					}
+
                     ph *= w;
                     w = drawRect.dx;
                 }
                 else
                 {
-                    w = spr->GetWidth() * h * geometricData.scale.y;
+					w = spr->GetWidth() * h;// *geometricData.scale.y;
                     ph *= h;
                     h = drawRect.dy;
                 }

@@ -71,7 +71,8 @@ public:
         DRAW_STRETCH_HORIZONTAL,    //!<Stretch sprite horizontally along the control rect.
         DRAW_STRETCH_VERTICAL,      //!<Stretch sprite vertically along the control rect.
         DRAW_STRETCH_BOTH,          //!<Stretch sprite along the all control rect.
-        DRAW_TILED                  //!<Fill control with sprite tiles
+        DRAW_TILED,                 //!<Fill control with sprite tiles
+		DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE //!<Scale sprite to fit width or height into control rect but with keeping sprite proportions and ignore control scale
     };
 
     /**
