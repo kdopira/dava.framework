@@ -416,12 +416,7 @@ void UIControlBackground::Draw(const UIGeometricData &parentGeometricData)
             {
 				if (type == DRAW_SCALE_PROPORTIONAL_ONE || type == DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
                 {
-					w = spr->GetWidth() * h;
-
-					if (type != DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
-					{
-						w *= geometricData.scale.y;
-					}
+					w = spr->GetWidth() * h * geometricData.scale.y;
 
                     ph *= h;
                     h = drawRect.dy;
@@ -437,23 +432,32 @@ void UIControlBackground::Draw(const UIGeometricData &parentGeometricData)
             {
 				if (type == DRAW_SCALE_PROPORTIONAL_ONE || type == DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
                 {
-					h = spr->GetHeight() * w;
-					
-					if (type != DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
-					{
-						h *= geometricData.scale.x;
-					}
+					h = spr->GetHeight() * w * geometricData.scale.x;
 
                     ph *= w;
                     w = drawRect.dx;
                 }
                 else
                 {
-					w = spr->GetWidth() * h;// *geometricData.scale.y;
+					w = spr->GetWidth() * h * geometricData.scale.y;
                     ph *= h;
                     h = drawRect.dy;
                 }
             }
+
+
+			if (type == DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
+			{
+				const float maxScale = Max(geometricData.scale.x, geometricData.scale.y);
+				if (maxScale > 0.f)
+				{
+					const float xfactor = geometricData.scale.x / maxScale;
+					const float yfactor = geometricData.scale.y / maxScale;
+
+					w *= xfactor;
+					h *= yfactor;
+				}
+			}
 
             if(align & ALIGN_LEFT)
             {
