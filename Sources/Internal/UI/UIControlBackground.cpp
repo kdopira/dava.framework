@@ -448,11 +448,11 @@ void UIControlBackground::Draw(const UIGeometricData &parentGeometricData)
 
 			if (type == DRAW_SCALE_PROPORTIONAL_ONE_IGNORE_SCALE)
 			{
-				const float maxScale = Max(geometricData.scale.x, geometricData.scale.y);
-				if (maxScale > 0.f)
+				const float32 minScale = Min(geometricData.scale.x, geometricData.scale.y);
+				if (minScale > 0.f)
 				{
-					const float xfactor = geometricData.scale.x / maxScale;
-					const float yfactor = geometricData.scale.y / maxScale;
+					const float32 xfactor = geometricData.scale.x / minScale;
+					const float32 yfactor = geometricData.scale.y / minScale;
 
 					w *= xfactor;
 					h *= yfactor;
