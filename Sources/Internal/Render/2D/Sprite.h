@@ -282,7 +282,12 @@ public:
 	 */
 	static void ReloadSprites();
 
+public:
+
+	float32 **frameVertices;
+	float32 **texCoords;
 protected:
+
 	Sprite();
 	Sprite(int32 sprWidth, int32 sprHeight, PixelFormat format);
 	virtual ~Sprite();
@@ -316,9 +321,6 @@ protected:
 
 	Vector<UniqueHandle> textureHandles;
 	
-	float32 **frameVertices;
-	float32 **texCoords;
-
 	Polygon2 * clipPolygon;
 
 	void PrepareForNewSize();
