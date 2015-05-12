@@ -1126,6 +1126,33 @@ Image * Texture::ReadDataToImage()
     return image; 
 }
 
+Image * Texture::ReadTextureToImage()
+{
+	DVASSERT(Texture::TEXTURE_2D == textureType);
+	const PixelFormatDescriptor & formatDescriptor = PixelFormatDescriptor::GetPixelFormatDescriptor(texDescriptor->format);
+
+	Image *image = Image::Create(width, height, formatDescriptor.formatID);
+	uint8 *imageData = image->GetData();
+
+#if defined(__DAVAENGINE_OPENGL__)
+
+	int32 saveId = RenderManager::Instance()->HWglGetLastTextureID(textureType);
+
+	RenderManager::Instance()->HWglBindTexture(id, textureType);
+
+	if (FORMAT_INVALID != formatDescriptor.formatID)
+	{
+		RENDER_VERIFY(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+		RENDER_VERIFY(glGetTexImage(GL_TEXTURE_2D, 0, formatDescriptor.format, formatDescriptor.type, (GLvoid *)imageData));
+	}
+
+	RenderManager::Instance()->HWglBindTexture(saveId, textureType);
+
+#endif //#if defined(__DAVAENGINE_OPENGL__)
+
+	return image;
+}
+
 
 Image * Texture::CreateImageFromMemory(UniqueHandle renderState)
 {

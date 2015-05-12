@@ -259,6 +259,10 @@ public:
 	PixelFormat GetFormat() const;
 
     static void SetPixelization(bool value);
+
+	Image * ReadDataToImage();
+	Image * ReadTextureToImage();
+
 protected:
     
     void ReleaseTextureData();
@@ -287,7 +291,7 @@ protected:
 	Texture();
 	virtual ~Texture();
     
-    Image * ReadDataToImage();
+    //Image * ReadDataToImage();
     
 #if defined(__DAVAENGINE_OPENGL__)
 	void HWglCreateFBOBuffers();

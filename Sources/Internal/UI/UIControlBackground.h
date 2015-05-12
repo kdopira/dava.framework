@@ -264,7 +264,7 @@ public:
 
     virtual void Draw(const UIGeometricData &geometricData);
 
-    /**
+	/**
      \brief Creates the absoulutely identic copy of the background.
      \returns UIControlBackground copy
      */
@@ -315,6 +315,8 @@ public:
 
     void SetRenderState(UniqueHandle renderState);
     UniqueHandle GetRenderState() const;
+
+	virtual void OnDraw(const Sprite::DrawState& drawState);
 
 protected:
 

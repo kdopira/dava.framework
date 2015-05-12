@@ -268,6 +268,8 @@ void UIControlBackground::SetParentColor(const Color &parentColor)
     }
 }
 
+void UIControlBackground::OnDraw(const Sprite::DrawState& drawState) {}
+
 void UIControlBackground::Draw(const UIGeometricData &parentGeometricData)
 {
     UIGeometricData geometricData;
@@ -547,7 +549,9 @@ void UIControlBackground::Draw(const UIGeometricData &parentGeometricData)
 #if defined(LOCALIZATION_DEBUG)
     lastDrawState = drawState;
 #endif
-    RenderManager::Instance()->ResetColor();
+
+	RenderManager::Instance()->ResetColor();
+	OnDraw(drawState);
 
 }
 #if defined(LOCALIZATION_DEBUG)
