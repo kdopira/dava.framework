@@ -1126,6 +1126,7 @@ Image * Texture::ReadDataToImage()
     return image; 
 }
 
+/*
 Image * Texture::ReadTextureToImage()
 {
 	DVASSERT(Texture::TEXTURE_2D == textureType);
@@ -1152,7 +1153,7 @@ Image * Texture::ReadTextureToImage()
 
 	return image;
 }
-
+*/
 
 Image * Texture::CreateImageFromMemory(UniqueHandle renderState)
 {

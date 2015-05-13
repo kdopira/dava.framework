@@ -261,7 +261,7 @@ public:
     static void SetPixelization(bool value);
 
 	Image * ReadDataToImage();
-	Image * ReadTextureToImage();
+	//Image * ReadTextureToImage();
 
 protected:
     
