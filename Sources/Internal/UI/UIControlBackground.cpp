@@ -595,6 +595,11 @@ void UIControlBackground::SetShader(Shader *_shader)
     }
 }
 
+Shader* UIControlBackground::GetShader()
+{
+	return shader;
+}
+
 void UIControlBackground::SetMargins(const UIMargins* uiMargins)
 {
     if (!uiMargins || uiMargins->empty())
