@@ -136,6 +136,12 @@ void VirtualCoordinatesSystem::ScreenSizeChanged()
         Sprite::ValidateForSize();
         TextBlock::ScreenResolutionChanged();
     }
+
+	//NOTE: WOTGM hotfix
+	if (allowedSizes.size() > 0)
+	{
+		desirableIndex = allowedSizes.size() - 1;
+	}
     
     RenderSystem2D::Instance()->ScreenSizeChanged();
 }
