@@ -110,6 +110,7 @@ void LocalNotificationIOS::PostDelayedNotification(const WideString &title, cons
 {
     UILocalNotification *notification = [[[UILocalNotification alloc] init] autorelease];
     notification.alertBody = NSStringFromWideString(text);
+    notification.soundName = UILocalNotificationDefaultSoundName;
     notification.timeZone = [NSTimeZone defaultTimeZone];
     notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:delaySeconds];
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];

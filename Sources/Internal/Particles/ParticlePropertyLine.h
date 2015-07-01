@@ -86,7 +86,7 @@ public:
 
 	PropertyLine<T>* Clone()
 	{	
-		if (this == 0)return 0;
+		//if (this == 0)return 0;
 		return new PropertyLineValue<T>(PropertyLine<T>::keys[0].value); 
 	}	
 };
@@ -152,7 +152,7 @@ public:
 	
 	PropertyLine<T>* Clone()
 	{ 
-		if (this == 0)return 0;
+		//if (this == 0)return 0;
 		PropertyLineKeyframes<T>* clone =  new PropertyLineKeyframes<T>();
 		clone->keys = PropertyLine<T>::keys;
 		return clone;

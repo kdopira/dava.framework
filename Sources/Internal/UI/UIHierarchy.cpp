@@ -563,7 +563,7 @@ bool UIHierarchy::SystemInput(UIEvent *currentInput)
                                     ||  InputSystem::Instance()->GetKeyboard().IsKeyPressed(DVKEY_SHIFT);
             if(!isCommandPressed)
             {
-                if(abs(currentInput->point.y - newPos) > touchHoldSize)
+                if(fabs(currentInput->point.y - newPos) > touchHoldSize)
                 {
                     UIControlSystem::Instance()->SwitchInputToControl(mainTouch, this);
                     newPos = currentInput->point.y;

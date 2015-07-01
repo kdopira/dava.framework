@@ -101,10 +101,11 @@ fillMode(FILLMODE_COUNT),
 stencilRef(0),
 stencilMask(0)
 {
-    memset(stencilFunc, 0, sizeof(stencilFunc));
-    memset(stencilPass, 0, sizeof(stencilPass));
-    memset(stencilFail, 0, sizeof(stencilFail));
-    memset(stencilZFail, 0, sizeof(stencilZFail));
+
+	stencilFunc[0] = stencilFunc[1] = CMP_ALWAYS;
+	stencilPass[0] = stencilPass[1] = STENCILOP_KEEP;
+	stencilFail[0] = stencilFail[1] = STENCILOP_KEEP;
+	stencilZFail[0] = stencilZFail[1] = STENCILOP_KEEP;
 }
 
 inline RenderStateData::RenderStateData(const RenderStateData& data)

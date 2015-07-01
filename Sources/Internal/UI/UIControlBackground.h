@@ -301,7 +301,8 @@ public:
 
 
     void SetShader(Shader *shader);
-    
+	Shader* GetShader();
+
     /**
      \brief Sets the margins for drawing background. Positive values means inner
      offset, negative ones - outer.

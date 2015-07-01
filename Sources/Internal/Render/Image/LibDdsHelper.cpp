@@ -26,6 +26,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =====================================================================================*/
 
+//#define USE_NVTT
 
 #include "Render/Image/Image.h"
 #include "Render/Image/ImageSystem.h"
@@ -34,8 +35,11 @@
 #include "Render/Texture.h"
 #include "Render/RenderManager.h"
 #include "Render/PixelFormatDescriptor.h"
+
+#ifdef USE_NVTT
 #include <libdxt/nvtt.h>
 #include <libdxt/nvtt_extra.h>
+#endif
 
 #include "FileSystem/File.h"
 #include "FileSystem/FileSystem.h"
@@ -48,11 +52,13 @@
 #define DDS_HEADER_CRC_OFFSET		60			//offset  to 9th element of dwReserved1 array(dds header)
 #define METADATA_CRC_TAG			0x5f435243  // equivalent of 'C''R''C''_'
 
+#ifdef USE_NVTT
 using namespace nvtt;
+#endif
 
 namespace DAVA
 {
-
+#ifdef USE_NVTT
 class NvttHelper
 {
 public:
@@ -194,6 +200,8 @@ nvtt::Format NvttHelper::GetNVTTFormatByPixelFormat(PixelFormat pixelFormat)
 	}
 	return retValue;
 }
+    
+#endif
 
 class QualcommHeler
 {
@@ -251,6 +259,7 @@ bool LibDdsHelper::DecompressImageToRGBA(const Image & image, Vector<Image*> &im
 		Logger::Error("[LibDdsHelper::DecompressImageToRGBA] Wrong copression format (%d).", image.format);
 		return false;
 	}
+#ifdef USE_NVTT
 	nvtt::Format innerComprFormat = NvttHelper::GetNVTTFormatByPixelFormat(image.format);
 	if(nvtt::Format_BC5 == innerComprFormat)
 	{ 	//bc5 is unsupported, used to determinate fail in search
@@ -289,13 +298,17 @@ bool LibDdsHelper::DecompressImageToRGBA(const Image & image, Vector<Image*> &im
 
     SafeDeleteArray(compressedImageBuffer);
 	return retValue;
+#else
+    return false;
+#endif
 }
 
 LibDdsHelper::LibDdsHelper()
 {
     supportedExtensions.push_back(".dds");
 }
-    
+
+#ifdef USE_NVTT
 bool NvttHelper::IsAtcFormat(nvtt::Format format)
 {
 	return (format == Format_ATC_RGB || format == Format_ATC_RGBA_EXPLICIT_ALPHA || format == Format_ATC_RGBA_INTERPOLATED_ALPHA);
@@ -557,10 +570,11 @@ bool NvttHelper::DecompressAtc(const nvtt::Decompressor & dec, DDSInfo info, Pix
 	return false;
 #endif //defined (__DAVAENGINE_MACOS__) || defined (__DAVAENGINE_WIN32__)
 }
+#endif
 
 bool LibDdsHelper::WriteDxtFile(const FilePath & fileNameOriginal, const Vector<Image *> &imageSet, PixelFormat compressionFormat)
 {
-#ifdef __DAVAENGINE_IPHONE__
+#ifndef USE_NVTT
     
     DVASSERT_MSG(false, "No necessary write compressed files on mobile");
     return false;
@@ -632,7 +646,7 @@ bool LibDdsHelper::WriteDxtFile(const FilePath & fileNameOriginal, const Vector<
 
 bool LibDdsHelper::WriteDxtFileAsCubemap(const DAVA::FilePath &fileNameOriginal, const Vector<Vector<DAVA::Image *> > &imageSet, DAVA::PixelFormat compressionFormat)
 {
-#ifdef __DAVAENGINE_IPHONE__
+#ifndef USE_NVTT
     
     DVASSERT_MSG(false, "No necessary write compressed files on mobile");
     return false;
@@ -714,7 +728,7 @@ bool LibDdsHelper::WriteDxtFileAsCubemap(const DAVA::FilePath &fileNameOriginal,
     
 bool LibDdsHelper::WriteAtcFile(const FilePath & fileNameOriginal, const Vector<Image *> &imageSet, PixelFormat compressionFormat)
 {
-#if defined(__DAVAENGINE_IPHONE__) || defined(__DAVAENGINE_ANDROID__)
+#ifndef USE_NVTT
 	DVASSERT_MSG(false, "Qualcomm doesn't provide texture converter library for ios/android");
 	return false;
 
@@ -838,7 +852,7 @@ bool LibDdsHelper::WriteAtcFile(const FilePath & fileNameOriginal, const Vector<
     
 bool LibDdsHelper::WriteAtcFileAsCubemap(const DAVA::FilePath &fileNameOriginal, const Vector<Vector<DAVA::Image *> > &imageSet, DAVA::PixelFormat compressionFormat)
 {
-#if defined(__DAVAENGINE_IPHONE__) || defined(__DAVAENGINE_ANDROID__)
+#ifndef USE_NVTT
     DVASSERT_MSG(false, "Qualcomm doesn't provide texture converter library for ios/android");
     return false;
     
@@ -987,15 +1001,20 @@ bool LibDdsHelper::WriteAtcFileAsCubemap(const DAVA::FilePath &fileNameOriginal,
 
 bool LibDdsHelper::IsImage(File * file) const
 {
+#ifdef USE_NVTT
 	nvtt::Decompressor dec;
     
 	bool retValue = NvttHelper::InitDecompressor(dec,file);
     file->Seek(0,  File::SEEK_FROM_START);
     return retValue;
+#else
+    return false;
+#endif
 }
 
 PixelFormat LibDdsHelper::GetPixelFormat(const FilePath & fileName)
 {
+#ifdef USE_NVTT
 	nvtt::Decompressor dec;
 
 	if(!NvttHelper::InitDecompressor(dec, fileName))
@@ -1004,10 +1023,14 @@ PixelFormat LibDdsHelper::GetPixelFormat(const FilePath & fileName)
 	}
 
 	return NvttHelper::GetPixelFormat(dec);
+#else
+    return PixelFormat();
+#endif
 }
 
 PixelFormat LibDdsHelper::GetPixelFormat(File * file)
 {
+#ifdef USE_NVTT
 	nvtt::Decompressor dec;
 
 	if(!NvttHelper::InitDecompressor(dec, file))
@@ -1016,10 +1039,14 @@ PixelFormat LibDdsHelper::GetPixelFormat(File * file)
 	}
 
 	return NvttHelper::GetPixelFormat(dec);
+#else
+    return PixelFormat();
+#endif
 }
 
 uint32 LibDdsHelper::GetMipMapLevelsCount(const FilePath & fileName)
 {
+#ifdef USE_NVTT
 	nvtt::Decompressor dec;
 
 	if(!NvttHelper::InitDecompressor(dec, fileName))
@@ -1028,10 +1055,14 @@ uint32 LibDdsHelper::GetMipMapLevelsCount(const FilePath & fileName)
 	}
 
 	return NvttHelper::GetMipMapLevelsCount(dec);
+#else
+    return 0;
+#endif
 }
 
 uint32 LibDdsHelper::GetMipMapLevelsCount(File * file)
 {
+#ifdef USE_NVTT
 	nvtt::Decompressor dec;
 
 	if(!NvttHelper::InitDecompressor(dec, file))
@@ -1040,10 +1071,14 @@ uint32 LibDdsHelper::GetMipMapLevelsCount(File * file)
 	}
 
 	return NvttHelper::GetMipMapLevelsCount(dec);
+#else
+    return 0;
+#endif
 }
 
 uint32 LibDdsHelper::GetDataSize(File * file) const
 {
+#ifdef USE_NVTT
     nvtt::Decompressor dec ;
 
 	if(!NvttHelper::InitDecompressor(dec, file))
@@ -1052,10 +1087,14 @@ uint32 LibDdsHelper::GetDataSize(File * file) const
 	}
 
 	return NvttHelper::GetDataSize(dec);
+#else
+    return 0;
+#endif
 }
 
 Size2i LibDdsHelper::GetImageSize(File *file) const
 {
+#ifdef USE_NVTT
 	nvtt::Decompressor dec ;
 
 	if(!NvttHelper::InitDecompressor(dec, file))
@@ -1064,10 +1103,14 @@ Size2i LibDdsHelper::GetImageSize(File *file) const
 	}
 
 	return NvttHelper::GetImageSize(dec);
+#else
+    return Size2i(0, 0);
+#endif
 }
 
 bool LibDdsHelper::GetTextureSize(const FilePath & fileName, uint32 & width, uint32 & height)
 {
+#ifdef USE_NVTT
 	nvtt::Decompressor dec;
 
 	if(!NvttHelper::InitDecompressor(dec, fileName))
@@ -1076,10 +1119,15 @@ bool LibDdsHelper::GetTextureSize(const FilePath & fileName, uint32 & width, uin
 	}
 
 	return NvttHelper::GetTextureSize(dec, width, height);
+    
+#else
+    return false;
+#endif
 }
 
 bool LibDdsHelper::GetTextureSize(File * file, uint32 & width, uint32 & height)
 {
+#ifdef USE_NVTT
 	nvtt::Decompressor dec ;
 
 	if(!NvttHelper::InitDecompressor(dec, file))
@@ -1088,6 +1136,9 @@ bool LibDdsHelper::GetTextureSize(File * file, uint32 & width, uint32 & height)
 	}
 
 	return NvttHelper::GetTextureSize(dec, width, height);
+#else
+    return false;
+#endif
 }
  
 bool LibDdsHelper::AddCRCIntoMetaData(const FilePath &filePathname) const
@@ -1213,6 +1264,8 @@ uint32 LibDdsHelper::GetCRCFromFile(const FilePath &filePathname) const
 	bool success = GetCRCFromDDSHeader(filePathname, &tag, &crc);
 	return success ? crc : CRC32::ForFile(filePathname);
 }
+    
+#ifdef USE_NVTT
 
 PixelFormat NvttHelper::GetPixelFormat(nvtt::Decompressor & dec)
 {
@@ -1381,6 +1434,7 @@ uint32 NvttHelper::GetCubeFaceId(uint32 nvttFaceDesc, int faceIndex)
 	
 	return faceId;
 }
+#endif
 
 eErrorCode LibDdsHelper::ReadFile(File *infile, Vector<Image *> &imageSet, int32 baseMipMap) const
 {
@@ -1389,6 +1443,7 @@ eErrorCode LibDdsHelper::ReadFile(File *infile, Vector<Image *> &imageSet, int32
 
 eErrorCode LibDdsHelper::ReadFile(File * file, Vector<Image*> &imageSet, int32 baseMipMap, bool forceSoftwareConvertation)
 {
+#ifdef USE_NVTT
     if(NULL == file)
     {
         return ERROR_FILE_NOTFOUND;
@@ -1401,6 +1456,9 @@ eErrorCode LibDdsHelper::ReadFile(File * file, Vector<Image*> &imageSet, int32 b
     }
     
     return NvttHelper::ReadDxtFile(dec, imageSet, baseMipMap,forceSoftwareConvertation) ? SUCCESS : ERROR_READ_FAIL;
+#else
+    return ERROR_FILE_FORMAT_INCORRECT;
+#endif
 }
  
 eErrorCode LibDdsHelper::WriteFile(const FilePath & fileName, const Vector<Image *> &imageSet, PixelFormat compressionFormat) const
