@@ -579,11 +579,11 @@ void TextBlock::CalculateCacheParams()
             }
             else if(ALIGN_HCENTER & align)
             {
-                int32 endPos = length / 2;
-                int32 startPos = endPos - 1;
-                int32 count = endPos;
+                int32 endPos = length / 2 + 1;
+                int32 startPos = endPos;
+                int32 count = endPos+1;
 
-                for(int32 i = 1; i < count; ++i)
+                for(int32 i = 1; i <= count; ++i)
                 {
                     pointsStr.clear();
                     pointsStr.append(visualText, startPos, endPos - startPos);
@@ -595,7 +595,7 @@ void TextBlock::CalculateCacheParams()
                     }
 
                     --startPos;
-                    ++endPos;
+					endPos = DAVA::Min(endPos + 1, length);
                 }
             }
         }
@@ -1092,7 +1092,7 @@ void TextBlock::SplitTextToStrings(const WideString& string, Vector2 const& targ
         }
         else // If not then split by previous symbol
         {
-            pos--;
+            if( pos>0 ) pos--;
         }
 
         WideString line = string.substr(fromPos, pos - fromPos + 1);
