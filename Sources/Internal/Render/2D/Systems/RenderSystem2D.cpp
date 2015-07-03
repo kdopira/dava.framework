@@ -1066,13 +1066,16 @@ void RenderSystem2D::DrawStretched(Sprite * sprite, Sprite::DrawState * state, V
 	
     RENDERER_UPDATE_STATS(spriteDrawCount++);
 
-    spriteVertexStream->Set(TYPE_FLOAT, 2, 0, &sd.transformedVertices[0]);
-    spriteTexCoordStream->Set(TYPE_FLOAT, 2, 0, &sd.texCoords[0]);
-    RenderManager::Instance()->SetTextureState(textureHandle);
-    RenderManager::Instance()->SetRenderState(state->renderState);
-    RenderManager::Instance()->SetRenderEffect(TEXTURE_MUL_FLAT_COLOR);
-    RenderManager::Instance()->SetRenderData(spriteRenderObject);
-    RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, sd.GetVertexInTrianglesCount(), EIF_16, (void*)sd.indeces);
+	if (!sd.transformedVertices.empty() && !sd.texCoords.empty())
+	{
+		spriteVertexStream->Set(TYPE_FLOAT, 2, 0, &sd.transformedVertices[0]);
+		spriteTexCoordStream->Set(TYPE_FLOAT, 2, 0, &sd.texCoords[0]);
+		RenderManager::Instance()->SetTextureState(textureHandle);
+		RenderManager::Instance()->SetRenderState(state->renderState);
+		RenderManager::Instance()->SetRenderEffect(TEXTURE_MUL_FLAT_COLOR);
+		RenderManager::Instance()->SetRenderData(spriteRenderObject);
+		RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, sd.GetVertexInTrianglesCount(), EIF_16, (void*)sd.indeces);
+	}
     
 #endif //USE_BATCHING
 
@@ -1165,16 +1168,17 @@ void RenderSystem2D::DrawTiled(Sprite * sprite, Sprite::DrawState * state, const
 #else //USE_BATCHING
 
     RENDERER_UPDATE_STATS(spriteDrawCount++);
+	if (!td.transformedVertices.empty() && !td.texCoords.empty())
+	{
+		spriteVertexStream->Set(TYPE_FLOAT, 2, 0, &td.transformedVertices[0]);
+		spriteTexCoordStream->Set(TYPE_FLOAT, 2, 0, &td.texCoords[0]);
 
-    spriteVertexStream->Set(TYPE_FLOAT, 2, 0, &td.transformedVertices[0]);
-    spriteTexCoordStream->Set(TYPE_FLOAT, 2, 0, &td.texCoords[0]);
-
-    RenderManager::Instance()->SetTextureState(textureHandle);
-    RenderManager::Instance()->SetRenderState(state->renderState);
-    RenderManager::Instance()->SetRenderEffect(TEXTURE_MUL_FLAT_COLOR);
-    RenderManager::Instance()->SetRenderData(spriteRenderObject);
-    RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, td.indeces.size(), EIF_16, &td.indeces[0]);
-	
+		RenderManager::Instance()->SetTextureState(textureHandle);
+		RenderManager::Instance()->SetRenderState(state->renderState);
+		RenderManager::Instance()->SetRenderEffect(TEXTURE_MUL_FLAT_COLOR);
+		RenderManager::Instance()->SetRenderData(spriteRenderObject);
+		RenderManager::Instance()->DrawElements(PRIMITIVETYPE_TRIANGLELIST, td.indeces.size(), EIF_16, &td.indeces[0]);
+	}
 #endif //USE_BATCHING
 
     if (!pTiledData)
