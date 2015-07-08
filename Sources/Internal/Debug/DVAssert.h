@@ -72,7 +72,7 @@
 #include "Debug/DVAssertMessage.h"
 
 
-#if defined(ENABLE_ASSERT_BREAK)
+#if defined(ENABLE_ASSERT_BREAK) || defined(ENABLE_ASSERT_MUTE_MESSAGE)
 
 #if defined(__DAVAENGINE_IPHONE__) || defined(__DAVAENGINE_MACOS__) || defined(__DAVAENGINE_ANDROID__) // Mac & iPhone & Android
 
@@ -111,18 +111,20 @@ inline void DavaDebugBreak()
     #define LogWarningFunction(assertType, expr, msg, file, line)
 #endif //ENABLE_ASSERT_LOGGING
 
-#if defined(ENABLE_ASSERT_MESSAGE)
-    #define MessageFunction(messagetype, assertType, expr, msg, file, line) \
-        DAVA::DVAssertMessage::ShowMessage(messagetype, \
-            "%s\n\n%s\n%s\n\nFile: %s\nLine: %d", assertType, expr, msg, file, \
-            line)
-#else //ENABLE_ASSERT_MESSAGE
-    #define MessageFunction(messagetype, assertType, expr, msg, file, line) \
-        false
-#endif //ENABLE_ASSERT_MESSAGE
-
-
-
+#if defined(ENABLE_ASSERT_MUTE_MESSAGE)
+		#define MessageFunction(messagetype, assertType, expr, msg, file, line) \
+			true
+#else
+	#if defined(ENABLE_ASSERT_MESSAGE)
+		#define MessageFunction(messagetype, assertType, expr, msg, file, line) \
+			DAVA::DVAssertMessage::ShowMessage(messagetype, \
+				"%s\n\n%s\n%s\n\nFile: %s\nLine: %d", assertType, expr, msg, file, \
+				line)
+	#else //ENABLE_ASSERT_MESSAGE
+		#define MessageFunction(messagetype, assertType, expr, msg, file, line) \
+			false
+	#endif //ENABLE_ASSERT_MESSAGE
+#endif
 
 #if !defined(__DAVAENGINE_DEBUG__) && !defined(ENABLE_ASSERT_MESSAGE) && !defined(ENABLE_ASSERT_LOGGING) && !defined(ENABLE_ASSERT_BREAK)
 
