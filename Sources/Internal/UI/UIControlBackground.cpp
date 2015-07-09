@@ -541,6 +541,9 @@ void UIControlBackground::Draw(const UIGeometricData &parentGeometricData)
         break;
 
         case DRAW_TILED:
+            geometricData.position.x = floor(geometricData.position.x);
+            geometricData.position.y = floor(geometricData.position.y);
+            
             RenderSystem2D::Instance()->DrawTiled(spr, &drawState, Vector2(leftStretchCap, topStretchCap), geometricData, &tiledData);
         break;
         default:
