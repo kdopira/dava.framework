@@ -1299,6 +1299,11 @@ namespace DAVA
 
     void UIControl::SystemUpdate(float32 timeElapsed)
     {
+        if(!GetSystemVisible())
+        {
+            return;
+        }
+        
         UIControlSystem::Instance()->updateCounter++;
         Update(timeElapsed);
         isUpdated = true;
