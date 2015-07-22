@@ -128,7 +128,8 @@ SoundEvent * SoundSystem::CreateSoundEventByID(const FastName & eventName, const
 SoundEvent * SoundSystem::CreateSoundEventFromFile(const FilePath & fileName, const FastName & groupName, uint32 flags /* = SOUND_EVENT_DEFAULT */, int32 priority /* = 128 */)
 {
     SoundEvent * event = 0;
-    
+  
+#if 0
 #ifdef __DAVAENGINE_IPHONE__
     if((flags & SoundEvent::SOUND_EVENT_CREATE_STREAM) && !(flags & SoundEvent::SOUND_EVENT_CREATE_3D))
     {
@@ -139,6 +140,7 @@ SoundEvent * SoundSystem::CreateSoundEventFromFile(const FilePath & fileName, co
         event = musicEvent;
     }
 #endif //__DAVAENGINE_IPHONE__
+#endif
     
     if(!event)
     {
